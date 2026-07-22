@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw -q -DskipTests -Dspring-boot.run.arguments=--server.port=8090 spring-boot:run)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(curl -s -c /tmp/cookies.txt -o /dev/null -w 'login: HTTP %{http_code}\\\\n' -X POST http://localhost:8090/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin1234\"}')",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"con cookie: HTTP %{http_code}\\\\n\" http://localhost:8090/api/v1/users)",
+      "Bash(curl -s -o /dev/null -w \"sin creds: HTTP %{http_code}\\\\n\" http://localhost:8090/api/v1/users)"
+    ]
+  }
+}
