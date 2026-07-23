@@ -27,6 +27,14 @@ public class User{
            inverseJoinColumns =@JoinColumn(name="role_id",referencedColumnName = "id")
    )
     private Set<Role> roles = new HashSet<Role>();
+
+    @ManyToMany(fetch = FetchType.LAZY ,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinTable(
+            name = "user_attended_events",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Event> attendedEvents = new HashSet<>();
 }
 
 
