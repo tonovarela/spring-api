@@ -6,7 +6,7 @@ import com.gestion.eventos.api.exception.ResouceNotFoundException;
 import com.gestion.eventos.api.repository.IUserRepository;
 
 
-import com.gestion.eventos.api.service.interfaces.IUserService;
+import com.gestion.eventos.api.security.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,4 +1,4 @@
-package com.gestion.eventos.api.service.interfaces;
+package com.gestion.eventos.api.security.service;
 
 import com.gestion.eventos.api.domain.User;
 import org.springframework.security.core.userdetails.UserDetailsService;

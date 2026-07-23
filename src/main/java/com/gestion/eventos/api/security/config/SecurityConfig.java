@@ -1,5 +1,6 @@
-package com.gestion.eventos.api.security;
+package com.gestion.eventos.api.security.config;
 
+import com.gestion.eventos.api.exception.CustomAuthenticationEntryPoint;
 import com.gestion.eventos.api.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -40,9 +41,10 @@ public class SecurityConfig {
                       auth->
                               auth
                                       .requestMatchers("/api/v1/auth/**").permitAll()
+                                      .requestMatchers("/h2-console/**").permitAll()
                                       .requestMatchers(HttpMethod.GET,"/api/v1/events").authenticated()
                                       .anyRequest().authenticated()
-              )
+              ).headers(AbstractHttpConfigurer::disable)
       ;
    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
       return http.build();

@@ -3,7 +3,7 @@ package com.gestion.eventos.api.controller;
 
 import com.gestion.eventos.api.domain.User;
 
-import com.gestion.eventos.api.service.interfaces.IUserService;
+import com.gestion.eventos.api.security.service.IUserService;
 
 import lombok.AllArgsConstructor;
 

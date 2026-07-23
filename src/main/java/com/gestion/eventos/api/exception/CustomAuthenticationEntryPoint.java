@@ -1,4 +1,4 @@
-package com.gestion.eventos.api.security;
+package com.gestion.eventos.api.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,10 +28,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         errors.put("error", "Credenciales inválidas");
         body.put("errors", errors);
         body.put("status", HttpStatus.UNAUTHORIZED.value());
+        body.put("code", authException.getClass().getSimpleName());
         body.put("message", authException.getMessage());
+        body.put("path", request.getRequestURI());
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(), body);
     }
 }
+
+
+
+
