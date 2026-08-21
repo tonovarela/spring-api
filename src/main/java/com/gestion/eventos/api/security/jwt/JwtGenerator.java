@@ -2,6 +2,7 @@ package com.gestion.eventos.api.security.jwt;
 
 
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 
 @Component
+@Slf4j
 public class JwtGenerator {
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -28,6 +30,7 @@ public class JwtGenerator {
         String username = authentication.getName();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpiration);
+        log.debug("generateToken() - generando token para username={}, expira={}", username, expireDate);
         return Jwts.builder()
                 .subject(username)
                 .notBefore(currentDate)
@@ -45,6 +48,7 @@ public class JwtGenerator {
               .parseSignedClaims(token)
               .getPayload();
 
+      log.debug("getUsernameFromToken() - subject={}", claims.getSubject());
       return claims.getSubject();
     }
 
@@ -54,18 +58,19 @@ public class JwtGenerator {
                     .verifyWith( getSigningKey())
                     .build()
                     .parseSignedClaims(token);
+            log.debug("validateToken() - token válido");
             return true;
         }catch (MalformedJwtException e){
-            System.out.println("Token mal formado: " + e.getMessage());
+            log.warn("Token mal formado: {}", e.getMessage());
         }
         catch (ExpiredJwtException e){
-            System.out.println("Token expirado: " + e.getMessage());
+            log.debug("Token expirado: {}", e.getMessage());
         }
         catch (IllegalArgumentException e) {
-            System.out.println("Token vacío: " + e.getMessage());
+            log.debug("Token vacío: {}", e.getMessage());
         }
         catch(UnsupportedJwtException e){
-            System.out.println("Token desconocido: " + e.getMessage());
+            log.warn("Token desconocido: {}", e.getMessage());
         }
         return false;
     }

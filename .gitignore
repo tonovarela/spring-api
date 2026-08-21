@@ -7,6 +7,10 @@ target/
 src/main/resources/application-*.properties
 !src/main/resources/application-example.properties
 
+### Variables de entorno locales ###
+.env
+!.env.example
+
 ### STS ###
 .apt_generated
 .classpath

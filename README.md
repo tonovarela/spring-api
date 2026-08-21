@@ -26,17 +26,35 @@ exception   -> manejo global de excepciones
 
 ## Configuración
 
-`src/main/resources/application.properties`:
+Los datos sensibles (base de datos y clave JWT) no se guardan en los `.properties`.
+Se leen de variables de entorno. Para desarrollo local, copiar la plantilla:
 
-```properties
-spring.application.name=api
-spring.jpa.show-sql=true
-sping.jpa.hibernate.ddl-auto=update
-jwt.secret=EsteEsUnSecretoMuySecretoPeronoSeLoDigasAAlguienPorqueEsMuySecretoMuySecreto
-jwt.expiration=3600000
+```bash
+cp .env.example .env
 ```
 
-> Nota: cambiar `jwt.secret` en producción y no versionarlo en texto plano.
+y completar los valores en `.env` (archivo ignorado por git):
+
+```properties
+DB_URL=jdbc:postgresql://localhost:5432/gestioneventosdb
+DB_USERNAME=...
+DB_PASSWORD=...
+JWT_SECRET=...
+```
+
+`application.properties` importa ese archivo con
+`spring.config.import=optional:file:.env[.properties]`, y los perfiles
+`application-dev.properties` / `application-prod.properties` referencian las variables:
+
+```properties
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+jwt.secret=${JWT_SECRET}
+```
+
+> En producción no se usa `.env`: definir las variables como variables de entorno del sistema.
+> Generar una clave JWT nueva con `openssl rand -base64 64` (HS512 requiere al menos 64 caracteres).
 
 ## Ejecutar
 

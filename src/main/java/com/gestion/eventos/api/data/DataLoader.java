@@ -4,6 +4,7 @@ package com.gestion.eventos.api.data;
 import com.gestion.eventos.api.domain.*;
 import com.gestion.eventos.api.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataLoader implements CommandLineRunner {
 
     private final IUserRepository userRepository;
@@ -32,6 +34,8 @@ public class DataLoader implements CommandLineRunner {
     @Transactional
     public void run(String ... args) throws Exception {
 
+            log.debug("run() - iniciando carga de datos iniciales");
+
 
 
             // --- LÓGICA EXISTENTE PARA ROLES Y USUARIOS ---
@@ -39,6 +43,7 @@ public class DataLoader implements CommandLineRunner {
                     .orElseGet( () -> {
                         Role newRole = new Role();
                         newRole.setName("ROLE_ADMIN");
+                        log.info("Rol 'ROLE_ADMIN' creado.");
                         return roleRepository.save(newRole);
                     });
 
@@ -46,6 +51,7 @@ public class DataLoader implements CommandLineRunner {
                     .orElseGet(() -> {
                         Role newRole = new Role();
                         newRole.setName("ROLE_USER");
+                        log.info("Rol 'ROLE_USER' creado.");
                         return roleRepository.save(newRole);
                     });
 
@@ -63,7 +69,7 @@ public class DataLoader implements CommandLineRunner {
                 admin.setRoles(adminRoles);
 
                 userRepository.save(admin);
-                System.out.println("Usuario 'admin' creado.");
+                log.info("Usuario 'admin' creado.");
             }
 
             if (userRepository.findByUsername("user").isEmpty()) {
@@ -78,23 +84,26 @@ public class DataLoader implements CommandLineRunner {
                 regularUser.setRoles(userRoles);
 
                 userRepository.save(regularUser);
-                System.out.println("Usuario 'user' creado.");
+                log.info("Usuario 'user' creado.");
             }
 
             // --- LÓGICA EXISTENTE PARA CATEGORÍAS ---
             Category conferencia = categoryRepository.findByName("Conferencia")
                     .orElseGet(() -> {
                         Category newCat = new Category(null, "Conferencia", "Eventos de gran escala con múltiples oradores.");
+                        log.info("Categoría 'Conferencia' creada.");
                         return categoryRepository.save(newCat);
                     });
             Category taller = categoryRepository.findByName("Taller")
                     .orElseGet(() -> {
                         Category newCat = new Category(null, "Taller", "Eventos interactivos y prácticos.");
+                        log.info("Categoría 'Taller' creada.");
                         return categoryRepository.save(newCat);
                     });
             Category webinar = categoryRepository.findByName("Webinar")
                     .orElseGet(() -> {
                         Category newCat = new Category(null, "Webinar", "Seminarios online en vivo.");
+                        log.info("Categoría 'Webinar' creada.");
                         return categoryRepository.save(newCat);
                     });
             // --- También puedes usar existsByName para verificar antes de crear como lo tenías.
@@ -106,11 +115,13 @@ public class DataLoader implements CommandLineRunner {
             Speaker john = speakerRepository.findByEmail("john.doe@example.com")
                     .orElseGet(() -> {
                         Speaker newSpeaker = new Speaker(null, "John Doe", "john.doe@example.com", "Experto en desarrollo de software.", new HashSet<>());
+                        log.info("Speaker 'John Doe' creado.");
                         return speakerRepository.save(newSpeaker);
                     });
             Speaker jane = speakerRepository.findByEmail("jane.smith@example.com")
                     .orElseGet(() -> {
                         Speaker newSpeaker = new Speaker(null, "Jane Smith", "jane.smith@example.com", "Especialista en marketing digital.", new HashSet<>());
+                        log.info("Speaker 'Jane Smith' creado.");
                         return speakerRepository.save(newSpeaker);
                     });
             // Asegúrate de que los repositorios de Category y Speaker tengan métodos findByName y findByEmail respectivamente.
@@ -120,7 +131,9 @@ public class DataLoader implements CommandLineRunner {
 
 
             // --- NUEVA LÓGICA PARA CREAR Y GUARDAR EVENTOS ---
-            if (eventRepository.count() == 0) { // Solo cargar eventos si la tabla está vacía
+            long existingEvents = eventRepository.count();
+            log.debug("run() - eventos existentes en base de datos: {}", existingEvents);
+            if (existingEvents == 0) { // Solo cargar eventos si la tabla está vacía
                 List<Event> events = new ArrayList<>();
                 LocalDate baseDate = LocalDate.now();
 
@@ -156,13 +169,12 @@ public class DataLoader implements CommandLineRunner {
                 }
 
                 eventRepository.saveAll(events);
-                System.out.println("Cargados " + events.size() + " eventos de prueba en la base de datos.");
+                log.info("Cargados {} eventos de prueba en la base de datos.", events.size());
 
 
             }
 
-
-
+            log.debug("run() - carga de datos iniciales finalizada");
 
     }
 
